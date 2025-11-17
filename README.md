@@ -64,8 +64,8 @@ You should see Python 3.7 or higher.
 If you have Git installed:
 
 ```bash
-git clone <repository-url>
-cd CPRE-5300_PROJECT
+git clone https://github.com/shafiqul92/soc-incident-response-simulator.git
+cd soc-incident-response-simulator
 ```
 
 Or download and extract the project ZIP file to your desired location.
@@ -73,7 +73,7 @@ Or download and extract the project ZIP file to your desired location.
 ### Step 2: Navigate to Project Directory
 
 ```bash
-cd CPRE-5300_PROJECT
+cd soc-incident-response-simulator
 ```
 
 ### Step 3: Create Virtual Environment (Recommended)
