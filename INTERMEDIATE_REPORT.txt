@@ -1,10 +1,12 @@
 Interactive Network Incident Response Simulator
-Intermediate Project Report
+Project Research & Content Development Report
 
 Author: Md Shafiqul Islam
 Course: CPRE-5300
 Semester: Fall 2025
 Date: November 2025
+
+GitHub Repository: https://github.com/shafiqul92/soc-incident-response-simulator
 
 ================================================================================
 1. PROJECT OVERVIEW
@@ -451,24 +453,77 @@ CPRE-5300_PROJECT/
 9. REFERENCES AND STANDARDS
 ================================================================================
 
-- NIST SP 800-61 Rev. 2: Computer Security Incident Handling Guide
-- CISA: Incident Response Playbooks
-- ENISA: Ransomware Good Practice Guide
-- Verizon DBIR 2024: Data Breach Investigations Report
+[1] NIST, "Computer Security Incident Handling Guide," NIST Special Publication 800-61 Rev. 2, Aug. 2012. [Online]. Available: https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf
+
+[2] Cybersecurity and Infrastructure Security Agency (CISA), "Incident Response Playbooks," 2024. [Online]. Available: https://www.cisa.gov/resources-tools/resources/incident-response-playbooks
+
+[3] European Union Agency for Cybersecurity (ENISA), "Ransomware - Good Practice Guide for Incident Response and Recovery," 2022. [Online]. Available: https://www.enisa.europa.eu/publications/ransomware-guide
+
+[4] Verizon, "2024 Data Breach Investigations Report (DBIR)," 2024. [Online]. Available: https://www.verizon.com/business/resources/reports/dbir/
+
+[5] Flask Development Team, "Flask Web Framework," [Online]. Available: https://flask.palletsprojects.com/
+
+[6] Chart.js Contributors, "Chart.js - Simple yet flexible JavaScript charting library," [Online]. Available: https://www.chartjs.org/
 
 ================================================================================
-10. CONCLUSION
+10. RESEARCH AND LEARNING PROCESS
+================================================================================
+
+10.1 Research Conducted
+
+Extensive research was conducted to ensure the scenarios are realistic and educational:
+
+- NIST SP 800-61 Rev. 2 [1] provided the framework for incident response procedures
+- CISA Incident Response Playbooks [2] informed scenario design and decision points
+- ENISA Ransomware Guide [3] contributed to ransomware scenario development
+- Verizon DBIR 2024 [4] provided real-world attack patterns and statistics
+
+10.2 Changes from Initial Proposal
+
+The project has evolved significantly from the initial proposal:
+
+1. Scenario Structure: Originally planned as 3 large scenarios, restructured into 3 main scenarios with 10 sub-scenarios for better learning progression
+2. Tab Navigation: Added tab-based interface to organize sub-scenarios within main scenarios
+3. Event Clearing: Implemented event clearing after decision points for better user experience
+4. Enhanced Descriptions: Added comprehensive descriptions for each scenario and sub-scenario
+5. Scoring Rubric: Integrated scoring rubric directly into scenario pages
+
+10.3 Learning Outcomes
+
+Through this project development, key learnings include:
+
+- Understanding of NIST incident response framework and its practical application
+- Web application architecture design (client-server separation)
+- RESTful API design and implementation
+- Frontend-backend integration patterns
+- Educational content design for cybersecurity training
+- JSON-based data modeling for scenario definitions
+
+10.4 Technical Challenges Overcome
+
+- Port conflicts: Resolved by using non-standard port (5050)
+- Event progression: Implemented proper state management for event sequences
+- Decision point flow: Created clear separation between events and decisions
+- Tab navigation: Developed dynamic tab system for sub-scenario organization
+- Session management: Implemented in-memory session tracking for user progress
+
+================================================================================
+11. CONCLUSION
 ================================================================================
 
 This intermediate report documents the current state of the Interactive Network Incident Response Simulator. The project successfully implements a functional training tool with three comprehensive scenarios covering DDoS attacks, data breaches, and ransomware infections. The tab-based sub-scenario system provides focused learning experiences, while the scoring and feedback mechanisms ensure educational value.
 
 The implementation follows modern web development practices with a clear separation of concerns between frontend and backend. The use of JSON for scenario storage provides flexibility for instructors to customize or add new scenarios.
 
-The project is ready for intermediate evaluation and demonstrates significant progress toward the final project goals.
+Substantial progress has been made since the initial proposal, with all core functionalities implemented and tested. The project demonstrates a strong understanding of incident response procedures, web application development, and educational content design.
+
+The project is ready for intermediate evaluation and demonstrates significant progress toward the final project goals. The educational value is evident through realistic scenarios, comprehensive feedback, and NIST-aligned recommendations.
 
 ================================================================================
 
 Report Generated: November 2025
 Project Status: Intermediate Development Phase
 Next Milestone: Final Implementation and Testing
+
+Repository: https://github.com/shafiqul92/soc-incident-response-simulator
 
