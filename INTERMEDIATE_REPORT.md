@@ -295,9 +295,9 @@ The simulator follows a client-server architecture with a clear separation betwe
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| **Python** | 3.x | Programming language |
-| **Flask** | Latest | Web framework for API and routing |
-| **Flask-CORS** | Latest | Cross-Origin Resource Sharing support |
+| **Python** | 3.12.6 | Programming language |
+| **Flask** | 3.0.0 | Web framework for API and routing |
+| **Flask-CORS** | 4.0.0 | Cross-Origin Resource Sharing support |
 | **JSON** | Built-in | Scenario data storage and API responses |
 | **UUID** | Built-in | Session ID generation |
 
@@ -305,10 +305,10 @@ The simulator follows a client-server architecture with a clear separation betwe
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| **HTML5** | Latest | Markup and structure |
-| **CSS3** | Latest | Styling and animations |
-| **JavaScript (ES6+)** | Vanilla | Frontend logic and interactivity |
-| **Chart.js** | Latest (CDN) | Metrics visualization (CPU, Memory, Network) |
+| **HTML5** | W3C Standard | Markup and structure |
+| **CSS3** | W3C Standard | Styling and animations |
+| **JavaScript (ES6+)** | ES2020+ | Frontend logic and interactivity |
+| **Chart.js** | 4.4.0+ (CDN) | Metrics visualization (CPU, Memory, Network) |
 
 ### 4.3 Development Tools
 
