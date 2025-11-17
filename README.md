@@ -403,7 +403,7 @@ Semester: Fall 2025
 
 For issues or questions:
 1. Check the Troubleshooting section
-2. Review the INTERMEDIATE_REPORT.md for implementation details
+2. Review the INTERMEDIATE_REPORT.txt for implementation details
 3. Verify all dependencies are installed correctly
 
 ---
