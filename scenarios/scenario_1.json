@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 1: Initial Traffic Spike Detection",
+  "type": "DDoS",
+  "description": "In this scenario, you'll observe a sudden and dramatic increase in network traffic to your web server. Watch for indicators like rising connection rates, increasing CPU usage, and degrading server performance. Your goal is to quickly identify this as a potential DDoS attack and take immediate containment actions. You'll practice recognizing early warning signs before the attack fully overwhelms your infrastructure.",
+  "events": [
+    { "id": "event_1", "type": "alert", "timestamp": "2025-11-15T10:00:00Z", "source": "Network Monitor", "severity": "medium", "title": "Unusual Traffic Spike Detected", "description": "Inbound TCP connection rate increased by 300% in the last 5 minutes", "metrics": { "inbound_connections": 15000, "normal_baseline": 5000, "cpu_usage": 45, "memory_usage": 52 } },
+    { "id": "event_2", "type": "log", "timestamp": "2025-11-15T10:00:30Z", "source": "Firewall", "severity": "medium", "title": "Connection Rate Limit Approaching", "description": "Firewall connection rate limit (20,000/min) at 76%. Many connections from same IP ranges.", "log_entry": "2025-11-15 10:00:30 [INFO] Firewall: 15,234/min (76%). Top source: 203.0.113.0/24", "metrics": { "inbound_connections": 15234, "firewall_utilization": 76, "cpu_usage": 48 } },
+    { "id": "event_3", "type": "alert", "timestamp": "2025-11-15T10:01:00Z", "source": "Load Balancer", "severity": "medium", "title": "Backend Server Health Degrading", "description": "One backend shows increased latency. Health check response time increased to 450ms.", "metrics": { "backend_latency_ms": 450, "healthy_servers": 2, "total_servers": 3, "cpu_usage": 52 } },
+    { "id": "event_4", "type": "log", "timestamp": "2025-11-15T10:01:30Z", "source": "Web Server", "severity": "medium", "title": "Thread Pool Busy", "description": "Web worker threads are saturating under load.", "log_entry": "2025-11-15 10:01:30 [WARN] Worker threads busy: 85%", "metrics": { "cpu_usage": 62, "memory_usage": 60 } },
+    { "id": "event_5", "type": "log", "timestamp": "2025-11-15T10:02:00Z", "source": "Web Server", "severity": "high", "title": "High CPU Usage Alert", "description": "Server CPU usage reached 85%. Response times increasing.", "log_entry": "2025-11-15 10:02:00 [WARNING] CPU usage: 85%, Load avg: 12.3", "metrics": { "cpu_usage": 85, "memory_usage": 68, "response_time_ms": 2500 } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T10:02:15Z", "description": "You've detected a significant traffic spike with increasing CPU usage. What is your immediate response?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Block top 10 source IPs immediately", "action_type": "block_ip", "target": "203.0.113.10", "correct": true, "score": 10, "feedback": "Correct! Quick containment reduces attack volume.", "explanation": "Blocking the heaviest sources immediately reduces impact." },
+      { "id": "opt_2", "text": "Restart the web server", "action_type": "restart_service", "correct": false, "score": 2, "feedback": "Not ideal. Does not stop the attack.", "explanation": "Restarting causes downtime and the flood resumes." },
+      { "id": "opt_3", "text": "Wait and monitor for 10 more minutes", "action_type": "monitor", "correct": false, "score": 0, "feedback": "Incorrect. Immediate action is required.", "explanation": "Delaying allows further impact and service degradation." },
+      { "id": "opt_4", "text": "Engage upstream provider for traffic scrubbing", "action_type": "escalate", "correct": true, "score": 8, "feedback": "Good choice, especially for large floods.", "explanation": "Upstream filtering removes malicious traffic earlier in the network path." }
+    ]}
+  ]
+}
+

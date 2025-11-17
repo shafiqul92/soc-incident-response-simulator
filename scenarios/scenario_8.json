@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 8: Lateral Movement Detection",
+  "type": "Ransomware",
+  "description": "Ransomware doesn't stay on one machine - it spreads. This scenario demonstrates lateral movement via SMB (Server Message Block) protocol. You'll see the ransomware connecting to multiple servers and encrypting files across your network. The attack is spreading rapidly, and you must implement comprehensive containment - isolating affected hosts and blocking SMB network-wide - to prevent further propagation and minimize damage.",
+  "events": [
+    { "id": "event_1", "type": "alert", "timestamp": "2025-11-15T09:04:00Z", "source": "Network Monitor", "severity": "medium", "title": "SMB Lateral Movement", "description": "Connections to 5 hosts from workstation-03", "metrics": { "lateral_movement_targets": 5 } },
+    { "id": "event_2", "type": "log", "timestamp": "2025-11-15T09:04:30Z", "source": "Network Monitor", "severity": "high", "title": "SMB Connections to Multiple Servers", "description": "workstation-03 connecting to db-server-01, app-server-02, file-server-01", "log_entry": "2025-11-15 09:04:30 [SMB] workstation-03 -> [db-server-01, app-server-02, file-server-01]", "metrics": { "target_hosts": 3, "smb_connections": 15 } },
+    { "id": "event_3", "type": "alert", "timestamp": "2025-11-15T09:05:00Z", "source": "File Monitor", "severity": "high", "title": "Encryption Spreading", "description": "Files being encrypted on db-server-01", "log_entry": "2025-11-15 09:05:00 [FILE] Encryption detected on db-server-01", "metrics": { "encrypted_files": 50, "affected_hosts": 2 } },
+    { "id": "event_4", "type": "log", "timestamp": "2025-11-15T09:05:30Z", "source": "Network Monitor", "severity": "critical", "title": "Rapid SMB Propagation", "description": "Ransomware spreading to 8 hosts via SMB", "log_entry": "2025-11-15 09:05:30 [NET] 8 hosts now showing encryption activity", "metrics": { "affected_hosts": 8, "propagation_rate": "high" } },
+    { "id": "event_5", "type": "alert", "timestamp": "2025-11-15T09:06:00Z", "source": "SIEM", "severity": "critical", "title": "Network-Wide Encryption Detected", "description": "Multiple hosts showing .locked file extensions", "log_entry": "2025-11-15 09:06:00 [SIEM] 8 hosts with .locked files", "metrics": { "affected_hosts": 8, "total_encrypted": 500 } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T09:06:15Z", "description": "Ransomware is spreading laterally via SMB to multiple hosts. What is your containment strategy?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Isolate all potentially affected hosts and block SMB network-wide", "action_type": "contain", "correct": true, "score": 10, "feedback": "Excellent comprehensive containment.", "explanation": "Prevents further spread across the network." },
+      { "id": "opt_2", "text": "Block SMB only on the source workstation", "action_type": "configure_firewall", "correct": false, "score": 4, "feedback": "Too limited - other hosts already affected.", "explanation": "Doesn't stop propagation from already-infected hosts." },
+      { "id": "opt_3", "text": "Restore encrypted files from backup", "action_type": "restore_backup", "correct": false, "score": 3, "feedback": "Too soon - containment first.", "explanation": "Recover after containment/eradication." },
+      { "id": "opt_4", "text": "Monitor to see which hosts get infected", "action_type": "monitor", "correct": false, "score": 0, "feedback": "Incorrect. Active spread requires immediate action.", "explanation": "Active ransomware requires immediate containment." }
+    ]}
+  ]
+}
+

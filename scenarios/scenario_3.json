@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 3: Mixed Attack Pattern Response",
+  "type": "DDoS",
+  "description": "Real-world attacks often evolve. In this scenario, you'll face a DDoS attack that starts as a SYN flood but morphs into a mixed SYN/UDP amplification attack. You'll need to adapt your response strategy as the attack pattern changes. This teaches you to monitor attack evolution and coordinate with upstream providers for comprehensive traffic scrubbing when dealing with multi-vector attacks.",
+  "events": [
+    { "id": "event_1", "type": "alert", "timestamp": "2025-11-15T10:07:00Z", "source": "Network Monitor", "severity": "medium", "title": "UDP Amplification Suspected", "description": "Small portion of traffic appears to be UDP amplification.", "metrics": { "udp_amplification_pct": 10, "inbound_connections": 8000 } },
+    { "id": "event_2", "type": "log", "timestamp": "2025-11-15T10:07:30Z", "source": "Firewall", "severity": "medium", "title": "Rate Limiting Applied", "description": "Applied rate limits to suspicious subnets.", "log_entry": "2025-11-15 10:07:30 [INFO] Rate limit applied to 203.0.113.0/24", "metrics": { "inbound_connections": 7000, "cpu_usage": 60 } },
+    { "id": "event_3", "type": "log", "timestamp": "2025-11-15T10:08:30Z", "source": "SIEM", "severity": "medium", "title": "New IP Range Involved", "description": "Another range 198.51.100.0/24 contributing to flood.", "log_entry": "2025-11-15 10:08:30 [ALERT] New range 198.51.100.0/24", "metrics": { "inbound_connections": 7500 } },
+    { "id": "event_4", "type": "alert", "timestamp": "2025-11-15T10:09:00Z", "source": "Network Monitor", "severity": "high", "title": "Attack Morphing", "description": "Shift from SYN to mixed SYN/UDP patterns.", "metrics": { "syn_flood_percentage": 55, "udp_amplification_pct": 20 } },
+    { "id": "event_5", "type": "log", "timestamp": "2025-11-15T10:09:15Z", "source": "Network Monitor", "severity": "high", "title": "UDP Traffic Increasing", "description": "UDP amplification now 35% of total traffic.", "log_entry": "2025-11-15 10:09:15 [ALERT] UDP: 35% of traffic", "metrics": { "udp_amplification_pct": 35, "inbound_connections": 9000, "cpu_usage": 75 } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T10:09:30Z", "description": "Attack is morphing from SYN to mixed SYN/UDP patterns. What is your next action?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Request upstream to enable scrubbing for both TCP and UDP", "action_type": "escalate", "correct": true, "score": 10, "feedback": "Best step for mixed floods.", "explanation": "Upstream scrubbing handles volumetric blends effectively." },
+      { "id": "opt_2", "text": "Disable UDP globally on firewall", "action_type": "configure_firewall", "correct": false, "score": 4, "feedback": "May break legitimate traffic.", "explanation": "Too disruptive for general operations." },
+      { "id": "opt_3", "text": "Do nothing and continue monitoring", "action_type": "monitor", "correct": false, "score": 0, "feedback": "Incorrect. The attack is changing.", "explanation": "Requires proactive containment." },
+      { "id": "opt_4", "text": "Block only UDP traffic", "action_type": "block_ip", "correct": false, "score": 5, "feedback": "Partial solution.", "explanation": "Doesn't address the SYN portion of the attack." }
+    ]}
+  ]
+}
+

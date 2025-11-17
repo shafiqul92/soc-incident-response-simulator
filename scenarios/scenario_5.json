@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 5: Unusual Location Login Detection",
+  "type": "Data Breach",
+  "description": "When an attacker successfully logs in with stolen credentials, they often access from unusual locations. This scenario demonstrates geolocation-based anomaly detection. You'll see a successful login from a country the user has never accessed from before, followed by impossible travel patterns (same user appearing in different countries within minutes). Learn to recognize these red flags and take immediate action to secure the compromised account.",
+  "events": [
+    { "id": "event_1", "type": "log", "timestamp": "2025-11-15T14:03:00Z", "source": "Authentication", "severity": "high", "title": "Successful Login from Unusual Location", "description": "User 'jdoe' logged in from UA; normal is US.", "log_entry": "2025-11-15 14:03:00 [AUTH] Success: jdoe from 198.51.100.45 (UA)", "metrics": { "login_success": true, "geolocation_anomaly": true, "previous_country": "US", "current_country": "UA" } },
+    { "id": "event_2", "type": "log", "timestamp": "2025-11-15T14:04:00Z", "source": "VPN", "severity": "medium", "title": "Impossible Travel", "description": "jdoe observed from UA then US within 10 minutes.", "metrics": { "impossible_travel": true } },
+    { "id": "event_3", "type": "alert", "timestamp": "2025-11-15T14:04:30Z", "source": "SIEM", "severity": "high", "title": "Geolocation Anomaly Score", "description": "High risk score: 95/100 for jdoe session.", "log_entry": "2025-11-15 14:04:30 [SIEM] Geo anomaly: jdoe (95/100)", "metrics": { "anomaly_score": 95 } },
+    { "id": "event_4", "type": "log", "timestamp": "2025-11-15T14:05:00Z", "source": "Authentication", "severity": "medium", "title": "New Device Registration", "description": "Unknown device 'Windows 10' registered from UA location.", "log_entry": "2025-11-15 14:05:00 [AUTH] New device: Windows 10 from UA", "metrics": { "new_device": true, "device_type": "Windows 10" } },
+    { "id": "event_5", "type": "alert", "timestamp": "2025-11-15T14:05:30Z", "source": "Access Control", "severity": "high", "title": "Accessing Sensitive Resources", "description": "jdoe accessing customer database from unusual location.", "log_entry": "2025-11-15 14:05:30 [ACCESS] jdoe -> customer_db from UA", "metrics": { "sensitive_access": true, "resource": "customer_db" } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T14:05:45Z", "description": "You've detected a successful login from an unusual location with impossible travel patterns. What is your response?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Immediately disable the account and force password reset", "action_type": "disable_account", "target": "jdoe", "correct": true, "score": 10, "feedback": "Correct! Stops potential credential misuse.", "explanation": "Account disablement prevents further unauthorized access." },
+      { "id": "opt_2", "text": "Require MFA verification for this session", "action_type": "configure_firewall", "correct": true, "score": 7, "feedback": "Good additional security measure.", "explanation": "MFA adds a layer but doesn't stop an already-compromised session." },
+      { "id": "opt_3", "text": "Monitor the session for suspicious activity", "action_type": "monitor", "correct": false, "score": 2, "feedback": "Too passive for high-risk indicators.", "explanation": "Monitoring alone doesn't prevent potential data exfiltration." },
+      { "id": "opt_4", "text": "Block the IP address only", "action_type": "block_ip", "target": "198.51.100.45", "correct": false, "score": 5, "feedback": "Partial solution.", "explanation": "Attacker may have already established session or can use different IPs." }
+    ]}
+  ]
+}
+

@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 7: Initial Ransomware Detection",
+  "type": "Ransomware",
+  "description": "Ransomware attacks often start with suspicious file activity. In this scenario, you'll see anomalous SMB write operations, unexpected process execution (like encrypt.exe), and files being renamed with suspicious extensions (.locked). You'll also observe shadow copy deletion, which attackers do to prevent recovery. Learn to recognize these early indicators and take immediate containment action before the ransomware spreads across your network.",
+  "events": [
+    { "id": "event_1", "type": "alert", "timestamp": "2025-11-15T09:00:00Z", "source": "File Monitor", "severity": "medium", "title": "Anomalous SMB Write Activity", "description": "workstation-03 writing many files on file-server-01", "log_entry": "2025-11-15 09:00:00 [SMB] workstation-03 -> file-server-01: 523 writes", "metrics": { "smb_writes": 523, "source_host": "workstation-03", "target_host": "file-server-01", "files_modified": 523 } },
+    { "id": "event_2", "type": "log", "timestamp": "2025-11-15T09:01:00Z", "source": "Process Monitor", "severity": "high", "title": "Unexpected Process Execution", "description": "encrypt.exe started by jsmith on workstation-03", "log_entry": "2025-11-15 09:01:00 [PROC] jsmith executed encrypt.exe (PID: 4521)", "metrics": { "process_name": "encrypt.exe", "host": "workstation-03", "user": "jsmith", "pid": 4521 } },
+    { "id": "event_3", "type": "alert", "timestamp": "2025-11-15T09:02:00Z", "source": "File Monitor", "severity": "high", "title": "File Renames To .locked", "description": "Multiple files renamed to .locked", "metrics": { "encrypted_files": 40, "file_extension": ".locked", "host": "file-server-01" } },
+    { "id": "event_4", "type": "log", "timestamp": "2025-11-15T09:03:00Z", "source": "Endpoint", "severity": "medium", "title": "Shadow Copy Deletion", "description": "vssadmin delete shadows observed", "metrics": { "shadow_copies_deleted": true } },
+    { "id": "event_5", "type": "alert", "timestamp": "2025-11-15T09:04:00Z", "source": "File Monitor", "severity": "critical", "title": "Rapid File Encryption", "description": "Encrypted files count: 200 and increasing rapidly", "log_entry": "2025-11-15 09:04:00 [FILE] 200 files encrypted on file-server-01", "metrics": { "encrypted_files": 200, "encryption_rate": "high" } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T09:04:15Z", "description": "You've detected active ransomware encryption with file renames and shadow copy deletion. What is your immediate containment action?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Isolate workstation-03 from the network immediately", "action_type": "isolate_host", "target": "workstation-03", "correct": true, "score": 10, "feedback": "Excellent! Prevents further spread.", "explanation": "Isolation stops encryption and lateral movement." },
+      { "id": "opt_2", "text": "Disconnect file-server-01 only", "action_type": "isolate_host", "target": "file-server-01", "correct": true, "score": 7, "feedback": "Good but prioritize the source host.", "explanation": "Isolate source first to stop propagation." },
+      { "id": "opt_3", "text": "Run antivirus scan on workstation-03", "action_type": "scan", "correct": false, "score": 2, "feedback": "Too slow during active encryption.", "explanation": "Scan allows encryption to continue." },
+      { "id": "opt_4", "text": "Monitor to see how many files get encrypted", "action_type": "monitor", "correct": false, "score": 0, "feedback": "Incorrect. Immediate action required.", "explanation": "Active ransomware requires immediate containment." }
+    ]}
+  ]
+}
+

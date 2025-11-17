@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 10: Post-Containment Eradication",
+  "type": "Ransomware",
+  "description": "Containment stops the spread, but eradication removes the threat completely. In this scenario, you'll discover persistence mechanisms (scheduled tasks, registry keys) and command-and-control (C2) infrastructure that the ransomware uses. Learn to identify and remove all persistence mechanisms, block C2 communications, and properly reimage affected systems to ensure a clean recovery without risk of reinfection.",
+  "events": [
+    { "id": "event_1", "type": "log", "timestamp": "2025-11-15T09:09:00Z", "source": "EDR", "severity": "medium", "title": "encrypt.exe Killed", "description": "Process terminated on workstation-03", "metrics": { "process_killed": true } },
+    { "id": "event_2", "type": "alert", "timestamp": "2025-11-15T09:09:30Z", "source": "Network", "severity": "medium", "title": "Containment Measures Active", "description": "SMB blocked; multiple hosts isolated.", "metrics": { "hosts_isolated": 6 } },
+    { "id": "event_3", "type": "log", "timestamp": "2025-11-15T09:10:00Z", "source": "SOC", "severity": "medium", "title": "IOC Search Started", "description": "Hunting for hashes and C2 domains", "metrics": { "hosts_scanned": 20 } },
+    { "id": "event_4", "type": "alert", "timestamp": "2025-11-15T09:10:30Z", "source": "EDR", "severity": "high", "title": "Persistence Mechanisms Found", "description": "Scheduled task and registry keys found on isolated hosts", "log_entry": "2025-11-15 09:10:30 [EDR] Persistence: scheduled task + registry keys", "metrics": { "persistence_mechanisms": 2 } },
+    { "id": "event_5", "type": "log", "timestamp": "2025-11-15T09:11:00Z", "source": "Security Team", "severity": "medium", "title": "Threat Actor Infrastructure", "description": "C2 domain identified: malicious-domain.tk", "log_entry": "2025-11-15 09:11:00 [SEC] C2: malicious-domain.tk", "metrics": { "c2_domains": 1 } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T09:11:15Z", "description": "After containment, you've found persistence mechanisms and C2 infrastructure. What is your eradication strategy?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Remove persistence mechanisms, block C2 domains, and reimage affected hosts", "action_type": "eradicate", "correct": true, "score": 10, "feedback": "Excellent comprehensive eradication.", "explanation": "Complete removal of threats and reimaging ensures clean state." },
+      { "id": "opt_2", "text": "Just remove the encrypt.exe file", "action_type": "remove_file", "correct": false, "score": 2, "feedback": "Insufficient - doesn't remove persistence.", "explanation": "Persistence mechanisms will allow reinfection." },
+      { "id": "opt_3", "text": "Block C2 domain only", "action_type": "block_ip", "correct": false, "score": 4, "feedback": "Partial solution.", "explanation": "Doesn't remove existing threats on hosts." },
+      { "id": "opt_4", "text": "Restore from backup without removing threats", "action_type": "restore_backup", "correct": false, "score": 3, "feedback": "Threats will persist after restore.", "explanation": "Must eradicate threats before or during restoration." }
+    ]}
+  ]
+}
+

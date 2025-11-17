@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 4: Failed Login Pattern Detection",
+  "type": "Data Breach",
+  "description": "Credential stuffing attacks use automated tools to try thousands of username/password combinations. In this scenario, you'll observe multiple failed login attempts from the same IP address targeting many different accounts. Learn to identify the pattern, recognize when account lockouts are triggered, and implement network-level blocking to stop the attack before credentials are compromised.",
+  "events": [
+    { "id": "event_1", "type": "alert", "timestamp": "2025-11-15T14:00:00Z", "source": "Authentication", "severity": "medium", "title": "Multiple Failed Login Attempts", "description": "User 'jdoe' has 15 failed attempts from 198.51.100.45", "log_entry": "2025-11-15 14:00:00 [AUTH] Failed login: jdoe from 198.51.100.45 (15/5)", "metrics": { "failed_logins": 15, "source_ip": "198.51.100.45", "account": "jdoe" } },
+    { "id": "event_2", "type": "log", "timestamp": "2025-11-15T14:01:00Z", "source": "Authentication", "severity": "medium", "title": "Credential Stuffing Pattern", "description": "Dozens of usernames with same IP.", "log_entry": "2025-11-15 14:01:00 [AUTH] Multiple accounts targeted from 198.51.100.45", "metrics": { "accounts_targeted": 24 } },
+    { "id": "event_3", "type": "alert", "timestamp": "2025-11-15T14:02:00Z", "source": "WAF", "severity": "medium", "title": "Login Page Flood", "description": "High POST rate to /login", "metrics": { "login_posts_per_min": 800 } },
+    { "id": "event_4", "type": "log", "timestamp": "2025-11-15T14:02:30Z", "source": "Authentication", "severity": "high", "title": "Account Lockout Triggered", "description": "Account 'jdoe' locked after 20 failed attempts.", "log_entry": "2025-11-15 14:02:30 [AUTH] Account locked: jdoe", "metrics": { "account_locked": true, "failed_attempts": 20 } },
+    { "id": "event_5", "type": "alert", "timestamp": "2025-11-15T14:03:00Z", "source": "SIEM", "severity": "high", "title": "Brute Force Attack Detected", "description": "Coordinated attack on 50+ accounts from same IP range.", "log_entry": "2025-11-15 14:03:00 [SIEM] Brute force: 50 accounts, 198.51.100.0/24", "metrics": { "accounts_targeted": 50, "source_range": "198.51.100.0/24" } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T14:03:15Z", "description": "You've detected a coordinated credential stuffing attack targeting multiple accounts. What is your immediate response?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Block the entire IP range 198.51.100.0/24", "action_type": "block_ip", "target": "198.51.100.0/24", "correct": true, "score": 10, "feedback": "Correct! Blocks the attack source effectively.", "explanation": "Blocking the source IP range stops the credential stuffing attack." },
+      { "id": "opt_2", "text": "Enable rate limiting on login endpoint", "action_type": "configure_firewall", "correct": true, "score": 8, "feedback": "Good defensive measure.", "explanation": "Rate limiting reduces attack effectiveness but doesn't stop it completely." },
+      { "id": "opt_3", "text": "Wait to see if any accounts are compromised", "action_type": "monitor", "correct": false, "score": 0, "feedback": "Incorrect. Immediate action is required.", "explanation": "Delaying allows the attack to continue and potentially succeed." },
+      { "id": "opt_4", "text": "Disable all targeted accounts", "action_type": "disable_account", "correct": false, "score": 3, "feedback": "Too disruptive for legitimate users.", "explanation": "This would lock out legitimate users unnecessarily." }
+    ]}
+  ]
+}
+

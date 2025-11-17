@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 2: SYN Flood Pattern Recognition",
+  "type": "DDoS",
+  "description": "This scenario focuses on SYN flood attacks, a common DDoS technique where attackers send many incomplete TCP connection requests. You'll see patterns of incomplete SYN packets, connection pool exhaustion, and increasing timeouts. Learn to distinguish SYN floods from normal traffic and implement appropriate mitigation techniques like SYN cookies or subnet blocking to protect your services.",
+  "events": [
+    { "id": "event_1", "type": "alert", "timestamp": "2025-11-15T10:02:30Z", "source": "Network Monitor", "severity": "high", "title": "SYN Flood Pattern Detected", "description": "65% of incoming connections are incomplete SYN requests.", "log_entry": "2025-11-15 10:02:30 [ALERT] 9,750 incomplete SYN from 203.0.113.0/24", "metrics": { "incomplete_syn_connections": 9750, "syn_flood_percentage": 65, "inbound_connections": 18000, "cpu_usage": 78 } },
+    { "id": "event_2", "type": "log", "timestamp": "2025-11-15T10:03:00Z", "source": "Application Server", "severity": "high", "title": "Connection Pool Exhausted", "description": "DB connection pool at capacity; new requests queuing.", "log_entry": "2025-11-15 10:03:00 [ERROR] DB Pool: 100/100. Queue depth: 45", "metrics": { "db_connections": 100, "db_queue_depth": 45, "memory_usage": 72, "cpu_usage": 82 } },
+    { "id": "event_3", "type": "log", "timestamp": "2025-11-15T10:03:30Z", "source": "APM", "severity": "high", "title": "Timeouts Increasing", "description": "15% of requests timing out.", "log_entry": "2025-11-15 10:03:30 [ERROR] Timeouts: 15%", "metrics": { "failed_requests": 1200, "response_time_ms": 6000, "cpu_usage": 88 } },
+    { "id": "event_4", "type": "log", "timestamp": "2025-11-15T10:04:00Z", "source": "Network Monitor", "severity": "critical", "title": "Service Degradation", "description": "Response time exceeded 5s. Connection timeouts reported.", "log_entry": "2025-11-15 10:04:00 [CRITICAL] Service unavailable 18%", "metrics": { "cpu_usage": 95, "memory_usage": 82, "response_time_ms": 8500, "failed_requests": 1500 } },
+    { "id": "event_5", "type": "alert", "timestamp": "2025-11-15T10:04:30Z", "source": "Network Monitor", "severity": "high", "title": "Traffic Pattern Analysis", "description": "80% of traffic is SYN flood from 203.0.113.0/24", "metrics": { "inbound_connections": 12000, "syn_flood_percentage": 80, "cpu_usage": 78 } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T10:04:45Z", "description": "You've identified a SYN flood attack causing service degradation. What additional containment measure should you take?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Enable SYN cookies on the firewall", "action_type": "configure_firewall", "correct": true, "score": 10, "feedback": "Excellent! Reduces resource exhaustion.", "explanation": "SYN cookies avoid holding half-open connections in memory." },
+      { "id": "opt_2", "text": "Increase server memory allocation", "action_type": "scale_resources", "correct": false, "score": 3, "feedback": "Delays, doesn't solve.", "explanation": "Scaling without mitigation is temporary and costly." },
+      { "id": "opt_3", "text": "Block entire 203.0.113.0/24 subnet", "action_type": "block_ip", "target": "203.0.113.0/24", "correct": true, "score": 8, "feedback": "Effective containment.", "explanation": "Subnet blocking reduces malicious flow substantially." },
+      { "id": "opt_4", "text": "Disable TCP connections temporarily", "action_type": "configure_firewall", "correct": false, "score": 1, "feedback": "Too disruptive.", "explanation": "This would break all legitimate traffic." }
+    ]}
+  ]
+}
+

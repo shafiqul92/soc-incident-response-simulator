@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 9: Ransom Note and Impact Assessment",
+  "type": "Ransomware",
+  "description": "After ransomware has encrypted files, you'll need to assess the damage and plan recovery. This scenario shows ransom notes being dropped, encryption completion across multiple hosts, and ransom demands. You'll also see that verified backups are available. Learn to make the critical decision: should you pay the ransom or restore from backups? This scenario teaches best practices for ransomware recovery and why paying attackers is generally not recommended.",
+  "events": [
+    { "id": "event_1", "type": "log", "timestamp": "2025-11-15T09:06:30Z", "source": "Endpoint", "severity": "medium", "title": "Ransom Note Dropped", "description": "note.txt created in multiple directories", "metrics": { "ransom_notes": 10 } },
+    { "id": "event_2", "type": "alert", "timestamp": "2025-11-15T09:07:00Z", "source": "File Monitor", "severity": "high", "title": "Encryption Complete on 3 Hosts", "description": "All accessible files encrypted on workstation-03, file-server-01, db-server-01", "log_entry": "2025-11-15 09:07:00 [FILE] Encryption complete: 3 hosts, 1500 files", "metrics": { "encrypted_files": 1500, "affected_hosts": 3 } },
+    { "id": "event_3", "type": "log", "timestamp": "2025-11-15T09:07:30Z", "source": "Security Team", "severity": "medium", "title": "Ransom Demand Analysis", "description": "Ransom note demands 5 BTC for decryption key", "log_entry": "2025-11-15 09:07:30 [SEC] Ransom: 5 BTC, deadline 72 hours", "metrics": { "ransom_amount": "5 BTC", "deadline_hours": 72 } },
+    { "id": "event_4", "type": "alert", "timestamp": "2025-11-15T09:08:00Z", "source": "Backup System", "severity": "low", "title": "Backup Verification Available", "description": "Last backup from 6 hours ago verified clean", "log_entry": "2025-11-15 09:08:00 [BACKUP] Last backup: 6h ago, verified", "metrics": { "backup_age_hours": 6, "backup_status": "clean" } },
+    { "id": "event_5", "type": "log", "timestamp": "2025-11-15T09:08:30Z", "source": "SOC", "severity": "medium", "title": "Impact Assessment", "description": "Critical systems affected: file-server-01, db-server-01. Non-critical: workstation-03", "log_entry": "2025-11-15 09:08:30 [SOC] Impact: 2 critical, 1 non-critical host", "metrics": { "critical_hosts": 2, "non_critical_hosts": 1 } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T09:08:45Z", "description": "Ransomware has encrypted files and dropped ransom notes. You have verified backups available. What is your recovery strategy?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Restore from verified backups and do not pay ransom", "action_type": "restore_backup", "correct": true, "score": 10, "feedback": "Correct! Best practice is to restore from backups.", "explanation": "Restoring from clean backups avoids paying ransom and ensures data integrity." },
+      { "id": "opt_2", "text": "Pay the ransom to get decryption key", "action_type": "pay_ransom", "correct": false, "score": 1, "feedback": "Not recommended. No guarantee of decryption.", "explanation": "Paying ransom funds criminals and doesn't guarantee recovery." },
+      { "id": "opt_3", "text": "Wait to see if decryption tools become available", "action_type": "monitor", "correct": false, "score": 2, "feedback": "Too passive with verified backups available.", "explanation": "With verified backups, immediate restoration is the best option." },
+      { "id": "opt_4", "text": "Restore only non-critical systems from backup", "action_type": "restore_backup", "correct": false, "score": 5, "feedback": "Partial solution - restore all affected systems.", "explanation": "All affected systems should be restored to ensure complete recovery." }
+    ]}
+  ]
+}
+

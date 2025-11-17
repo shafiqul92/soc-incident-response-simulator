@@ -1,0 +1,19 @@
+{
+  "name": "Scenario 6: Data Exfiltration Detection",
+  "type": "Data Breach",
+  "description": "Once attackers gain access, they often attempt to steal sensitive data. This scenario shows active data exfiltration in progress. You'll observe large outbound data transfers, database export commands, and Data Loss Prevention (DLP) alerts detecting sensitive information like Social Security Numbers in the data stream. Time is critical - learn to quickly isolate affected systems to stop the data theft before significant damage occurs.",
+  "events": [
+    { "id": "event_1", "type": "alert", "timestamp": "2025-11-15T14:05:00Z", "source": "Network Monitor", "severity": "high", "title": "Unusual Outbound Data Transfer", "description": "2.3 GB transferred from db-server-01 to 198.51.100.45", "log_entry": "2025-11-15 14:05:00 [NET] 2.3GB outbound to 198.51.100.45 from db-server-01:5432", "metrics": { "data_transferred_gb": 2.3, "destination_ip": "198.51.100.45", "source_host": "db-server-01", "port": 5432 } },
+    { "id": "event_2", "type": "log", "timestamp": "2025-11-15T14:05:30Z", "source": "DLP", "severity": "high", "title": "Sensitive Keywords Detected", "description": "Customer SSN pattern in outbound stream.", "metrics": { "dlp_hits": 120 } },
+    { "id": "event_3", "type": "alert", "timestamp": "2025-11-15T14:06:00Z", "source": "Database Audit", "severity": "high", "title": "Bulk Export Command", "description": "jdoe executed COPY on customer_data.", "log_entry": "2025-11-15 14:06:00 [DB] COPY customer_data TO '/tmp/cust.csv'", "metrics": { "records_accessed": 150000 } },
+    { "id": "event_4", "type": "log", "timestamp": "2025-11-15T14:06:30Z", "source": "Endpoint", "severity": "medium", "title": "Suspicious Process", "description": "powershell.exe spawned curl to external IP.", "metrics": { "process": "powershell.exe", "child": "curl.exe" } },
+    { "id": "event_5", "type": "alert", "timestamp": "2025-11-15T14:07:00Z", "source": "Proxy", "severity": "high", "title": "Large HTTPS Upload", "description": "700 MB uploaded to external IP 198.51.100.45", "log_entry": "2025-11-15 14:07:00 [PROXY] 700MB HTTPS upload to 198.51.100.45", "metrics": { "https_upload_mb": 700, "destination_ip": "198.51.100.45" } },
+    { "id": "decision_1", "type": "decision_point", "timestamp": "2025-11-15T14:07:15Z", "description": "You've detected active data exfiltration with sensitive data patterns. What is your immediate containment action?", "max_score": 10, "options": [
+      { "id": "opt_1", "text": "Isolate db-server-01 from the network immediately", "action_type": "isolate_host", "target": "db-server-01", "correct": true, "score": 10, "feedback": "Excellent! Stops exfiltration immediately.", "explanation": "Host isolation cuts outbound data flow quickly." },
+      { "id": "opt_2", "text": "Disable the compromised account (jdoe)", "action_type": "disable_account", "target": "jdoe", "correct": true, "score": 8, "feedback": "Good containment measure.", "explanation": "Stops further misuse but may not stop ongoing transfers." },
+      { "id": "opt_3", "text": "Block the destination IP address", "action_type": "block_ip", "target": "198.51.100.45", "correct": false, "score": 4, "feedback": "Too late - data may already be transferred.", "explanation": "IP blocking helps but doesn't stop data already in transit." },
+      { "id": "opt_4", "text": "Monitor to gather more evidence", "action_type": "monitor", "correct": false, "score": 0, "feedback": "Incorrect during active exfiltration.", "explanation": "Immediate containment is required to stop data loss." }
+    ]}
+  ]
+}
+
