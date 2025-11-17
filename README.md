@@ -153,12 +153,17 @@ Press `Ctrl+C` in the terminal to stop the Flask server.
 ## 📁 Project Structure
 
 ```
-CPRE-5300_PROJECT/
+soc-incident-response-simulator/
 │
 ├── app.py                      # Flask backend application
 ├── requirements.txt            # Python dependencies
 ├── README.md                   # This file
-├── INTERMEDIATE_REPORT.md     # Project report
+├── INTERMEDIATE_REPORT.txt     # Project report
+├── code/                       # Code files in .txt format
+│   ├── app.txt                # Flask backend (text format)
+│   ├── index.txt              # HTML template (text format)
+│   ├── app_js.txt             # JavaScript (text format)
+│   └── style_css.txt          # CSS (text format)
 │
 ├── templates/
 │   └── index.html             # Main HTML template
