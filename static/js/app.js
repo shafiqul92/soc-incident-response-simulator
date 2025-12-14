@@ -49,7 +49,7 @@ function setupEventListeners() {
         }
     });
 
-    document.getElementById('view-final-report-btn')?.addEventListener('click', () => {
+    document.getElementById('view-nist-button')?.addEventListener('click', () => {
         if (currentSessionId) {
             completeScenario();
         }
@@ -58,7 +58,7 @@ function setupEventListeners() {
     document.getElementById('back-to-scenario-btn')?.addEventListener('click', () => {
         showScreen('simulation-screen');
         document.getElementById('feedback-section').style.display = 'block';
-        const viewFinal = document.getElementById('view-final-report-btn');
+        const viewFinal = document.getElementById('view-nist-button');
         if (viewFinal) viewFinal.style.display = 'block';
     });
 
@@ -235,7 +235,7 @@ async function startScenario(scenarioId) {
             displayEvents(firstEventData.events, true);
             updateMetrics(firstEventData.events);
             updateScore();
-            const finalReportBtn = document.getElementById('view-final-report-btn');
+            const finalReportBtn = document.getElementById('view-nist-button');
             
             // Show decision point if it's the first event (unlikely but handle it)
             if (firstEventData.decision_point) {
@@ -370,7 +370,7 @@ async function startSubScenario(subScenarioIndex) {
         displayEvents(firstEventData.events, true);
         updateMetrics(firstEventData.events);
         updateScore();
-        const finalReportBtn = document.getElementById('view-final-report-btn');
+        const finalReportBtn = document.getElementById('view-nist-button');
         
         // Show decision point if it's the first event
         if (firstEventData.decision_point) {
@@ -444,7 +444,7 @@ async function loadNextEvent() {
         const response = await fetch(`${API_BASE}/sessions/${currentSessionId}/events?since=${lastDecisionStep}`);
         const data = await response.json();
 
-        const finalReportBtn = document.getElementById('view-final-report-btn');
+        const finalReportBtn = document.getElementById('view-nist-button');
         // Display events
         displayEvents(data.events);
 
