@@ -467,7 +467,7 @@ async function loadNextEvent() {
 
         // Check if scenario is complete
         if (!data.has_more && !data.decision_point) {
-            setTimeout(() => completeScenario(), 2000);
+        completeScenario();
         }
     } catch (error) {
         console.error('Error loading events:', error);
@@ -593,7 +593,7 @@ function showFeedback(feedback, selectedOptionId) {
             <p><strong>Score:</strong> ${feedback.score} / ${feedback.max_score}</p>
             ${why}
             <button id="view-feedback-details-btn" class="btn-secondary" style="margin-top: 15px; width: 100%;">View Detailed Analysis</button>
-            <p style="margin-top: 10px; font-style: italic; color: #666;">Check NIST recommendations for standard practices and guidelines.</p>
+            <p style="margin-top: 10px; font-style: italic; color: #666;">Hold tight for a few seconds while the NIST standard practice page appears automatically.</p>
         </div>
     `;
 
