@@ -10,8 +10,15 @@
 <body>
     <div class="container">
         <header>
-            <h1>Network Incident Response Simulator</h1>
-            <p class="subtitle">SOC-Style Training Tool for DDoS, Data Breach, and Ransomware Scenarios</p>
+            <div class="header-main">
+                <div>
+                    <h1>Network Incident Response Simulator</h1>
+                    <p class="subtitle">SOC-Style Training Tool for DDoS, Data Breach, and Ransomware Scenarios</p>
+                </div>
+                <div class="header-actions">
+                    <button id="learning-center-btn" class="btn-secondary">Learning Center</button>
+                </div>
+            </div>
         </header>
 
         <!-- Scenario Selection Screen -->
@@ -45,6 +52,35 @@
             </div>
         </div>
 
+        <!-- Learning Center Screen -->
+        <div id="learning-center" class="screen">
+            <h2>Learning Center</h2>
+            <section class="learning-section">
+                <h3>TCP/IP Overview</h3>
+                <p>The simulator maps incidents to the TCP/IP layers so you can understand where logs come from:</p>
+                <ul>
+                    <li><strong>Network/Transport:</strong> Connection floods, SYN behavior, and ACLs.</li>
+                    <li><strong>Application:</strong> Authentication logs, access control, and data exports.</li>
+                    <li><strong>Host:</strong> Process execution, file encryption, and persistence.</li>
+                </ul>
+            </section>
+            <section class="learning-section">
+                <h3>DDoS</h3>
+                <p>Focuses on volumetric attacks (SYN floods, UDP amplification). Key indicators include spike in inbound connections, firewall rate limits, and CPU overload.</p>
+            </section>
+            <section class="learning-section">
+                <h3>Data Breach</h3>
+                <p>Maps credential stuffing, impossible travel, and exfiltration to the application layer; correct responses include blocking IP ranges and enforcing MFA.</p>
+            </section>
+            <section class="learning-section">
+                <h3>Ransomware</h3>
+                <p>Covers lateral movement, persistence removal, and recovery; highlights the host/network tooling used for detection and containment.</p>
+            </section>
+            <div class="learning-actions">
+                <button id="learning-back-btn" class="btn-secondary">Back to Scenarios</button>
+            </div>
+        </div>
+
         <!-- Simulation Screen -->
         <div id="simulation-screen" class="screen">
             <div class="simulation-header">
@@ -52,15 +88,37 @@
                     <h2 id="scenario-title">Scenario</h2>
                     <button id="back-btn" class="btn-secondary">Back to Scenarios</button>
                 </div>
-                <div class="header-right">
-                    <div class="score-display">
-                        <span>Score: <strong id="current-score">0</strong> / <strong id="max-score">0</strong></span>
-                        <div class="score-bar">
-                            <div id="score-fill" class="score-fill"></div>
+                <div class="header-legend">
+                    <h4>Severity Indicators:</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-bar alert-critical"></div>
+                            <span title="Critical events usually indicate active impact and need immediate action.">Critical - Immediate action required</span>
                         </div>
-                        <button id="rubric-btn" class="btn-secondary" style="margin-top: 10px; width: 100%;">View Scoring Rubric</button>
+                        <div class="legend-item">
+                            <div class="legend-bar alert-high"></div>
+                            <span title="High severity events suggest urgent but not imminent failure.">High - Urgent attention needed</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-bar alert-medium"></div>
+                            <span title="Medium events should be tracked and correlated with other signals.">Medium - Monitor closely</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-bar alert-low"></div>
+                            <span title="Low events are informational or recovery-related.">Low - Informational / Recovery</span>
+                        </div>
                     </div>
                 </div>
+            <div class="header-right">
+                <div class="score-display">
+                    <span>Score: <strong id="current-score">0</strong> / <strong id="max-score">0</strong></span>
+                    <div class="score-bar">
+                        <div id="score-fill" class="score-fill"></div>
+                    </div>
+                    <button id="rubric-btn" class="btn-secondary" style="margin-top: 10px; width: 100%;">View Scoring Rubric</button>
+                    <button id="scenario-background-btn" class="btn-secondary" style="margin-top: 10px; width: 100%;">View Scenario Background</button>
+                </div>
+            </div>
             </div>
 
             <!-- Scenario Tabs (shown when scenario has sub-scenarios) -->
@@ -83,27 +141,9 @@
                 <div class="left-panel">
                     <div class="panel-header">
                         <h3>Events & Logs</h3>
-                        <button id="next-event-btn" class="btn-primary" style="display: none;">Next Event</button>
-                    </div>
-                    <div class="severity-legend">
-                        <h4>Severity Indicators:</h4>
-                        <div class="legend-items">
-                            <div class="legend-item">
-                                <div class="legend-bar alert-critical"></div>
-                                <span>Critical - Immediate action required</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-bar alert-high"></div>
-                                <span>High - Urgent attention needed</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-bar alert-medium"></div>
-                                <span>Medium - Monitor closely</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-bar alert-low"></div>
-                                <span>Low - Informational / Recovery</span>
-                            </div>
+                        <div class="panel-buttons">
+                            <button id="next-event-btn" class="btn-primary" style="display: none;">Next Event</button>
+                            <button id="view-final-report-btn" class="btn-secondary" style="display: none;">View NIST Recommendations</button>
                         </div>
                     </div>
                     <div id="events-container" class="events-container">
@@ -156,19 +196,12 @@
         <!-- Completion Screen -->
         <div id="completion-screen" class="screen">
             <div class="completion-content">
-                <h2>Scenario Complete!</h2>
-                <div class="final-score">
-                    <h3>Final Score</h3>
-                    <div class="score-circle">
-                        <span id="final-score-percentage">0%</span>
-                    </div>
-                    <p><strong id="final-score">0</strong> / <strong id="final-max-score">0</strong> points</p>
-                </div>
                 <div class="recommendations">
-                    <h3>NIST-Aligned Recommendations</h3>
+                    <h3>NIST Recommendations</h3>
                     <div id="recommendations-list"></div>
                 </div>
                 <div class="completion-actions">
+                    <button id="back-to-scenario-btn" class="btn-secondary">Back to Scenario</button>
                     <button id="restart-btn" class="btn-primary">Try Another Scenario</button>
                 </div>
             </div>
@@ -191,6 +224,34 @@
                     <li><strong>0–2 points (Incorrect)</strong>: Ineffective or risky action; delays containment or worsens the situation.</li>
                 </ul>
                 <p>Feedback explains why an action earned its score and how to improve next time. Final recommendations are aligned to NIST SP 800‑61.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scenario Background Modal -->
+    <div id="scenario-background-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Scenario Background</h3>
+                <button id="scenario-background-close" class="btn-secondary">Close</button>
+            </div>
+            <div class="modal-body">
+                <div id="scenario-background-body">
+                    <!-- Scenario-specific background content will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Details Modal -->
+    <div id="feedback-details-modal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header" style="position: relative;">
+                <h3>Detailed Analysis</h3>
+                <button id="feedback-details-close" class="btn-secondary" style="position: absolute; top: 16px; right: 20px; padding: 8px 16px;">✕ Close</button>
+            </div>
+            <div class="modal-body" id="feedback-details-body">
+                <!-- Details will be populated here -->
             </div>
         </div>
     </div>
