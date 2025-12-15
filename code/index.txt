@@ -10,8 +10,15 @@
 <body>
     <div class="container">
         <header>
-            <h1>Network Incident Response Simulator</h1>
-            <p class="subtitle">SOC-Style Training Tool for DDoS, Data Breach, and Ransomware Scenarios</p>
+            <div class="header-main">
+                <div>
+                    <h1>Network Incident Response Simulator</h1>
+                    <p class="subtitle">SOC-Style Training Tool for DDoS, Data Breach, and Ransomware Scenarios</p>
+                </div>
+                <div class="header-actions">
+                    <button id="learning-center-btn" class="btn-secondary">Learning Center</button>
+                </div>
+            </div>
         </header>
 
         <!-- Scenario Selection Screen -->
@@ -45,6 +52,284 @@
             </div>
         </div>
 
+        <!-- Learning Center Screen -->
+        <div id="learning-center" class="screen">
+            <div class="learning-hero">
+                <div>
+                    <h2>Learning Center</h2>
+                    <p class="learning-subtitle">
+                        A compact, practical guide to the core incident types in this simulator. Use this page to understand
+                        <strong>what's happening</strong>, <strong>what to look for</strong>, and <strong>why certain actions score higher</strong>.
+                    </p>
+                </div>
+                <div class="learning-jump">
+                    <a class="learning-pill" href="#lc-tcpip">TCP/IP & Logs</a>
+                    <a class="learning-pill" href="#lc-ddos">DDoS</a>
+                    <a class="learning-pill" href="#lc-breach">Data Breach</a>
+                    <a class="learning-pill" href="#lc-ransomware">Ransomware</a>
+                    <a class="learning-pill" href="#lc-nist">NIST Mapping</a>
+                </div>
+            </div>
+
+            <div class="learning-grid">
+                <section id="lc-tcpip" class="learning-card">
+                    <div class="learning-card-header">
+                        <h3>TCP/IP & Where Your Logs Come From</h3>
+                        <span class="learning-tag">Foundations</span>
+                    </div>
+
+                    <p>
+                        Incidents show up as signals across layers. Knowing the layer helps you choose the best containment:
+                        block at the edge for floods, fix auth for breaches, isolate hosts for ransomware.
+                    </p>
+
+                    <details class="learning-details" open>
+                        <summary>TCP/IP layers (fast mental model)</summary>
+                        <ul>
+                            <li><strong>Link / Network (L2/L3)</strong>: IPs, routing, ACLs, packet rates, NetFlow/sFlow, firewall drops.</li>
+                            <li><strong>Transport (L4)</strong>: TCP handshake behavior (SYN/SYN‑ACK/ACK), UDP bursts, connection tables, port scans.</li>
+                            <li><strong>Application (L7)</strong>: HTTP status spikes, auth failures, API abuse, large downloads, unusual user agents.</li>
+                            <li><strong>Host / Endpoint</strong>: process execution, scheduled tasks/services, file writes, encryption behavior, EDR alerts.</li>
+                        </ul>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Common evidence artifacts</summary>
+                        <ul>
+                            <li><strong>Network</strong>: firewall logs, IDS alerts, NetFlow, DNS logs, load balancer logs, packet captures (PCAP).</li>
+                            <li><strong>Application</strong>: web access logs, authentication logs, API gateway logs, database audit logs.</li>
+                            <li><strong>Endpoint</strong>: EDR telemetry, Windows Event Logs / Linux audit logs, file integrity monitoring.</li>
+                        </ul>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Why SYN floods are "special"</summary>
+                        <p>
+                            TCP needs a handshake. In a SYN flood, the attacker sends many SYN packets and never completes the handshake,
+                            leaving servers with many <strong>half‑open</strong> connections and exhausting connection/state tables.
+                        </p>
+                    </details>
+                </section>
+
+                <section id="lc-ddos" class="learning-card">
+                    <div class="learning-card-header">
+                        <h3>DDoS (Distributed Denial of Service)</h3>
+                        <span class="learning-tag ddos">Availability</span>
+                    </div>
+
+                    <p>
+                        <strong>Definition:</strong> A DDoS attempts to make a service unavailable by overwhelming bandwidth,
+                        network devices, or application resources—often using many distributed sources (botnets) or reflection/amplification.
+                    </p>
+
+                    <details class="learning-details" open>
+                        <summary>What happens in this scenario (typical DDoS progression)</summary>
+                        <ol>
+                            <li><strong>Traffic spike</strong>: inbound connections/packets jump sharply.</li>
+                            <li><strong>Service strain</strong>: CPU climbs, thread pools saturate, latency rises, errors increase.</li>
+                            <li><strong>Attack shifts</strong>: attackers blend methods (e.g., UDP flood + TCP SYN flood) to bypass simple blocks.</li>
+                        </ol>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Common DDoS types you'll see in practice</summary>
+                        <ul>
+                            <li><strong>Volumetric</strong>: huge bandwidth (bps) floods (often reflection/amplification).</li>
+                            <li><strong>Protocol</strong>: abuses L3/L4 behavior (SYN floods, state exhaustion).</li>
+                            <li><strong>Application-layer</strong>: targets expensive endpoints (login, search) with realistic-looking requests.</li>
+                        </ul>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Indicators (what to look for)</summary>
+                        <ul>
+                            <li><strong>Network</strong>: sudden bps/pps spikes, many sources, repeated patterns, "SYNs without ACKs".</li>
+                            <li><strong>Systems</strong>: CPU high, worker threads busy, connection tables near limits.</li>
+                            <li><strong>App</strong>: timeouts, 502/503/504 errors, degraded health checks.</li>
+                        </ul>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Response playbook (why "upstream scrubbing" scores high)</summary>
+                        <ul>
+                            <li><strong>Verify quickly</strong>: confirm it's malicious (traffic patterns, geo, ASN, handshake completion rate).</li>
+                            <li><strong>Engage DDoS protection</strong>: ISP/CDN scrubbing handles scale better than on-box firewall rules.</li>
+                            <li><strong>Rate-limit and tune</strong>: SYN cookies, connection limits, WAF rules, caching, request shaping.</li>
+                            <li><strong>Avoid overly broad blocks</strong>: disabling UDP globally can break DNS/VoIP/VPN and create outages.</li>
+                        </ul>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Real‑world examples (why they matter)</summary>
+                        <ul>
+                            <li><strong>Dyn DNS outage (2016)</strong>: a botnet-driven DDoS disrupted a major DNS provider, impacting many websites at once.</li>
+                            <li><strong>Memcached amplification (2018)</strong>: misconfigured services enabled reflection/amplification at massive scale—highlighting why exposed UDP services are risky.</li>
+                        </ul>
+                    </details>
+                </section>
+
+                <section id="lc-breach" class="learning-card">
+                    <div class="learning-card-header">
+                        <h3>Data Breach</h3>
+                        <span class="learning-tag breach">Confidentiality</span>
+                    </div>
+
+                    <p>
+                        <strong>Definition:</strong> Unauthorized access to sensitive data (PII, credentials, financial data, IP) and/or
+                        unauthorized disclosure via exfiltration, exposure, or misuse of access.
+                    </p>
+
+                    <details class="learning-details" open>
+                        <summary>What happens in this scenario (typical breach chain)</summary>
+                        <ol>
+                            <li><strong>Initial access</strong>: stolen credentials, phishing, MFA fatigue, or a vulnerable service.</li>
+                            <li><strong>Privilege & access expansion</strong>: new admin roles, token theft, access to databases/storage.</li>
+                            <li><strong>Collection & exfiltration</strong>: unusual queries, bulk exports, outbound transfers to unknown destinations.</li>
+                        </ol>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Indicators (auth + data movement)</summary>
+                        <ul>
+                            <li><strong>Auth anomalies</strong>: impossible travel, new device/location, high failed logins, unusual reset activity.</li>
+                            <li><strong>Account changes</strong>: MFA disabled, new API keys, role escalation, suspicious service accounts.</li>
+                            <li><strong>Exfil patterns</strong>: large downloads, unusual query volume, atypical outbound connections.</li>
+                        </ul>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Response playbook (why "MFA + containment" scores high)</summary>
+                        <ul>
+                            <li><strong>Contain access</strong>: disable/lock compromised accounts, revoke tokens/keys, block malicious IPs.</li>
+                            <li><strong>Preserve evidence</strong>: keep logs, timestamps, and scope the affected systems/data.</li>
+                            <li><strong>Reduce repeatability</strong>: enforce MFA, rotate credentials, implement rate-limits and device checks.</li>
+                            <li><strong>Communicate</strong>: coordinate with legal/IR leadership for notification requirements and timelines.</li>
+                        </ul>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Real‑world examples</summary>
+                        <ul>
+                            <li><strong>Target (2013)</strong>: third‑party access was used to reach internal systems; attackers deployed malware and exfiltrated payment data.</li>
+                            <li><strong>Equifax (2017)</strong>: exploitation of a vulnerable web application led to data exposure at large scale—highlighting patching, monitoring, and asset inventory.</li>
+                        </ul>
+                    </details>
+                </section>
+
+                <section id="lc-ransomware" class="learning-card">
+                    <div class="learning-card-header">
+                        <h3>Ransomware</h3>
+                        <span class="learning-tag ransomware">Availability + Extortion</span>
+                    </div>
+
+                    <p>
+                        <strong>Definition:</strong> Malware that encrypts (or destroys) data to disrupt operations, often paired with
+                        <strong>double extortion</strong> (data theft + leak threats).
+                    </p>
+
+                    <details class="learning-details" open>
+                        <summary>What happens in this scenario (common ransomware stages)</summary>
+                        <ol>
+                            <li><strong>Initial foothold</strong>: phishing, exposed remote access, stolen credentials, or vulnerability exploitation.</li>
+                            <li><strong>Lateral movement</strong>: attackers spread via SMB/RDP, remote execution tools, domain admin compromise.</li>
+                            <li><strong>Impact</strong>: backups targeted, shadow copies deleted, files encrypted, business operations disrupted.</li>
+                        </ol>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Indicators (the "oh no" signals)</summary>
+                        <ul>
+                            <li><strong>Endpoint</strong>: rapid file modifications/encryption, ransom notes, suspicious tools (remote exec, credential dumping).</li>
+                            <li><strong>Network</strong>: SMB scanning, unusual admin shares access, spikes in east‑west traffic.</li>
+                            <li><strong>Backups</strong>: deletion attempts, credential changes, backup job failures.</li>
+                        </ul>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Response playbook (why "isolate fast + restore safely" scores high)</summary>
+                        <ul>
+                            <li><strong>Contain immediately</strong>: isolate affected hosts (network quarantine), disable compromised accounts, block lateral movement.</li>
+                            <li><strong>Stop the spread</strong>: cut off shared drives, restrict admin tools, segment networks, tighten firewall rules.</li>
+                            <li><strong>Recover</strong>: restore from <strong>offline/immutable</strong> backups after verifying they are clean; rebuild golden images where needed.</li>
+                            <li><strong>Post-incident</strong>: root cause fix (patch/vuln close), MFA, least privilege, monitoring improvements.</li>
+                        </ul>
+                    </details>
+
+                    <details class="learning-details">
+                        <summary>Real‑world examples</summary>
+                        <ul>
+                            <li><strong>WannaCry (2017)</strong>: rapid worm-like spread using SMB vulnerabilities caused widespread disruption.</li>
+                            <li><strong>Colonial Pipeline (2021)</strong>: ransomware impacted operational continuity and highlighted the importance of access control and incident containment.</li>
+                            <li><strong>NotPetya (2017)</strong>: destructive "wiper-like" behavior shows why backup + rebuild planning matters.</li>
+                        </ul>
+                    </details>
+                </section>
+
+                <section id="lc-nist" class="learning-card">
+                    <div class="learning-card-header">
+                        <h3>How the Simulator Maps to NIST Incident Response</h3>
+                        <span class="learning-tag">NIST SP 800‑61</span>
+                    </div>
+
+                    <p>
+                        The simulator decision points are designed to reflect a typical lifecycle: detect & analyze, contain,
+                        eradicate, recover, then improve. Higher-scoring choices usually reduce impact faster and preserve evidence.
+                    </p>
+
+                    <div class="learning-table">
+                        <div class="learning-row learning-head">
+                            <div>Phase</div>
+                            <div>What you do in practice</div>
+                            <div>How it shows up in the simulator</div>
+                        </div>
+                        <div class="learning-row">
+                            <div><strong>Preparation</strong></div>
+                            <div>Plans, logging, backups, segmentation, MFA, tooling</div>
+                            <div>Learning Center + scenario background + good "before" recommendations</div>
+                        </div>
+                        <div class="learning-row">
+                            <div><strong>Detection & Analysis</strong></div>
+                            <div>Confirm incident, scope, collect evidence, identify root cause</div>
+                            <div>Events/logs + metrics trends + "what does this alert mean?" decisions</div>
+                        </div>
+                        <div class="learning-row">
+                            <div><strong>Containment</strong></div>
+                            <div>Stop spread/impact without breaking business</div>
+                            <div>Blocking, isolation, upstream scrubbing, account lockdown</div>
+                        </div>
+                        <div class="learning-row">
+                            <div><strong>Eradication</strong></div>
+                            <div>Remove attacker access and persistence</div>
+                            <div>Credential rotation, patching, malware removal steps</div>
+                        </div>
+                        <div class="learning-row">
+                            <div><strong>Recovery</strong></div>
+                            <div>Restore services/data safely and monitor for recurrence</div>
+                            <div>Restore from backups, validate, tighten controls</div>
+                        </div>
+                        <div class="learning-row">
+                            <div><strong>Post‑Incident</strong></div>
+                            <div>Lessons learned, improvements, reporting</div>
+                            <div>NIST recommendations screen + "what to do next time" guidance</div>
+                        </div>
+                    </div>
+
+                    <details class="learning-details">
+                        <summary>Recommended reading (optional)</summary>
+                        <ul>
+                            <li><a href="https://csrc.nist.gov/publications/detail/sp/800-61/rev-2/final" target="_blank" rel="noopener noreferrer">NIST SP 800‑61 Rev. 2 (Computer Security Incident Handling Guide)</a></li>
+                            <li><a href="https://www.cisa.gov/resources-tools/resources/ransomware-guide" target="_blank" rel="noopener noreferrer">CISA Ransomware Guide</a></li>
+                            <li><a href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">MITRE ATT&CK (tactics/techniques reference)</a></li>
+                        </ul>
+                    </details>
+                </section>
+            </div>
+
+            <div class="learning-actions">
+                <button id="learning-back-btn" class="btn-secondary">Back to Scenarios</button>
+            </div>
+        </div>
+
         <!-- Simulation Screen -->
         <div id="simulation-screen" class="screen">
             <div class="simulation-header">
@@ -52,15 +337,37 @@
                     <h2 id="scenario-title">Scenario</h2>
                     <button id="back-btn" class="btn-secondary">Back to Scenarios</button>
                 </div>
-                <div class="header-right">
-                    <div class="score-display">
-                        <span>Score: <strong id="current-score">0</strong> / <strong id="max-score">0</strong></span>
-                        <div class="score-bar">
-                            <div id="score-fill" class="score-fill"></div>
+                <div class="header-legend">
+                    <h4>Severity Indicators:</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-bar alert-critical"></div>
+                            <span title="Critical events usually indicate active impact and need immediate action.">Critical - Immediate action required</span>
                         </div>
-                        <button id="rubric-btn" class="btn-secondary" style="margin-top: 10px; width: 100%;">View Scoring Rubric</button>
+                        <div class="legend-item">
+                            <div class="legend-bar alert-high"></div>
+                            <span title="High severity events suggest urgent but not imminent failure.">High - Urgent attention needed</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-bar alert-medium"></div>
+                            <span title="Medium events should be tracked and correlated with other signals.">Medium - Monitor closely</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-bar alert-low"></div>
+                            <span title="Low events are informational or recovery-related.">Low - Informational / Recovery</span>
+                        </div>
                     </div>
                 </div>
+            <div class="header-right">
+                <div class="score-display">
+                    <span>Score: <strong id="current-score">0</strong> / <strong id="max-score">0</strong></span>
+                    <div class="score-bar">
+                        <div id="score-fill" class="score-fill"></div>
+                    </div>
+                    <button id="rubric-btn" class="btn-secondary" style="margin-top: 10px; width: 100%;">View Scoring Rubric</button>
+                    <button id="scenario-background-btn" class="btn-secondary" style="margin-top: 10px; width: 100%;">View Scenario Background</button>
+                </div>
+            </div>
             </div>
 
             <!-- Scenario Tabs (shown when scenario has sub-scenarios) -->
@@ -84,27 +391,6 @@
                     <div class="panel-header">
                         <h3>Events & Logs</h3>
                         <button id="next-event-btn" class="btn-primary" style="display: none;">Next Event</button>
-                    </div>
-                    <div class="severity-legend">
-                        <h4>Severity Indicators:</h4>
-                        <div class="legend-items">
-                            <div class="legend-item">
-                                <div class="legend-bar alert-critical"></div>
-                                <span>Critical - Immediate action required</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-bar alert-high"></div>
-                                <span>High - Urgent attention needed</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-bar alert-medium"></div>
-                                <span>Medium - Monitor closely</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-bar alert-low"></div>
-                                <span>Low - Informational / Recovery</span>
-                            </div>
-                        </div>
                     </div>
                     <div id="events-container" class="events-container">
                         <!-- Events will be displayed here -->
@@ -148,6 +434,9 @@
                     <div id="feedback-section" class="feedback-section" style="display: none;">
                         <h3>Feedback</h3>
                         <div id="feedback-content"></div>
+                        <div id="view-nist-button-container" style="margin-top: 15px; display: none;">
+                            <button id="view-nist-button" class="btn-primary" style="width: 100%;">View NIST Recommendations</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -156,19 +445,12 @@
         <!-- Completion Screen -->
         <div id="completion-screen" class="screen">
             <div class="completion-content">
-                <h2>Scenario Complete!</h2>
-                <div class="final-score">
-                    <h3>Final Score</h3>
-                    <div class="score-circle">
-                        <span id="final-score-percentage">0%</span>
-                    </div>
-                    <p><strong id="final-score">0</strong> / <strong id="final-max-score">0</strong> points</p>
-                </div>
                 <div class="recommendations">
-                    <h3>NIST-Aligned Recommendations</h3>
+                    <h3>NIST Recommendations</h3>
                     <div id="recommendations-list"></div>
                 </div>
                 <div class="completion-actions">
+                    <button id="back-to-scenario-btn" class="btn-secondary">Back to Scenario</button>
                     <button id="restart-btn" class="btn-primary">Try Another Scenario</button>
                 </div>
             </div>
@@ -195,7 +477,34 @@
         </div>
     </div>
 
+    <!-- Scenario Background Modal -->
+    <div id="scenario-background-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Scenario Background</h3>
+                <button id="scenario-background-close" class="btn-secondary">Close</button>
+            </div>
+            <div class="modal-body">
+                <div id="scenario-background-body">
+                    <!-- Scenario-specific background content will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Details Modal -->
+    <div id="feedback-details-modal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header" style="position: relative;">
+                <h3>Detailed Analysis</h3>
+                <button id="feedback-details-close" class="btn-secondary" style="position: absolute; top: 16px; right: 20px; padding: 8px 16px;">✕ Close</button>
+            </div>
+            <div class="modal-body" id="feedback-details-body">
+                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
-

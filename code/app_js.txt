@@ -13,6 +13,8 @@ let networkData = [];
 let lastDecisionStep = -1; // index of last resolved decision
 let currentStep = 0;       // server-reported current step
 let pendingDecisionStep = null;
+let displayedEventIds = new Set();
+let currentDecisionPoint = null;
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,6 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // Setup event listeners
 function setupEventListeners() {
     document.getElementById('back-btn')?.addEventListener('click', () => {
+        showScreen('scenario-selection');
+    });
+
+    document.getElementById('learning-center-btn')?.addEventListener('click', () => {
+        showScreen('learning-center');
+    });
+
+    document.getElementById('learning-back-btn')?.addEventListener('click', () => {
         showScreen('scenario-selection');
     });
 
@@ -39,6 +49,19 @@ function setupEventListeners() {
         }
     });
 
+    document.getElementById('view-nist-button')?.addEventListener('click', () => {
+        if (currentSessionId) {
+            completeScenario();
+        }
+    });
+
+    document.getElementById('back-to-scenario-btn')?.addEventListener('click', () => {
+        showScreen('simulation-screen');
+        document.getElementById('feedback-section').style.display = 'block';
+        const viewFinal = document.getElementById('view-nist-button');
+        if (viewFinal) viewFinal.style.display = 'block';
+    });
+
     // Rubric modal toggles
     const rubricBtn = document.getElementById('rubric-btn');
     const rubricModal = document.getElementById('rubric-modal');
@@ -51,6 +74,31 @@ function setupEventListeners() {
     });
     rubricModal?.addEventListener('click', (e) => {
         if (e.target === rubricModal) rubricModal.style.display = 'none';
+    });
+
+    // Scenario background modal
+    const scenarioBackgroundBtn = document.getElementById('scenario-background-btn');
+    const scenarioBackgroundModal = document.getElementById('scenario-background-modal');
+    const scenarioBackgroundClose = document.getElementById('scenario-background-close');
+    scenarioBackgroundBtn?.addEventListener('click', () => {
+        populateScenarioBackground();
+        scenarioBackgroundModal.style.display = 'flex';
+    });
+    scenarioBackgroundClose?.addEventListener('click', () => {
+        scenarioBackgroundModal.style.display = 'none';
+    });
+    scenarioBackgroundModal?.addEventListener('click', (e) => {
+        if (e.target === scenarioBackgroundModal) scenarioBackgroundModal.style.display = 'none';
+    });
+
+    // Feedback details close handler
+    const feedbackDetailsModal = document.getElementById('feedback-details-modal');
+    const feedbackDetailsClose = document.getElementById('feedback-details-close');
+    feedbackDetailsClose?.addEventListener('click', () => {
+        feedbackDetailsModal.style.display = 'none';
+    });
+    feedbackDetailsModal?.addEventListener('click', (e) => {
+        if (e.target === feedbackDetailsModal) feedbackDetailsModal.style.display = 'none';
     });
 }
 
@@ -86,6 +134,47 @@ function displayScenarios(scenarios) {
         card.addEventListener('click', () => startScenario(scenario.id));
         container.appendChild(card);
     });
+}
+
+function populateScenarioBackground() {
+    const body = document.getElementById('scenario-background-body');
+    if (!body || !currentScenario) return;
+
+    let html = '';
+    const id = currentScenario.id || '';
+
+    if (id === 'ddos') {
+        html = `
+            <h4>DDoS Scenario Background</h4>
+            <p>This scenario focuses on volumetric network/transport layer activity. Watch for inbound spikes, SYN flood ratios, and CPU overload.</p>
+            <ul>
+                <li><strong>Indicators:</strong> Rising SYN/incomplete handshake ratios, firewall connection limits.</li>
+                <li><strong>Responses:</strong> Block abusive IP ranges, enable SYN cookies, coordinate with upstream scrubbing.</li>
+            </ul>
+        `;
+    } else if (id === 'data_breach') {
+        html = `
+            <h4>Data Breach Scenario Background</h4>
+            <p>Application-layer incidents centered around credential misuse and data theft.</p>
+            <ul>
+                <li><strong>Indicators:</strong> Credential stuffing, impossible travel, large outbound data flows.</li>
+                <li><strong>Responses:</strong> Block IP ranges, disable accounts, isolate compromised systems.</li>
+            </ul>
+        `;
+    } else if (id === 'ransomware') {
+        html = `
+            <h4>Ransomware Scenario Background</h4>
+            <p>Host/network behavior including encryption, persistence, and lateral SMB movement.</p>
+            <ul>
+                <li><strong>Indicators:</strong> encrypt.exe/process creation, shadow copy deletion, .locked files.</li>
+                <li><strong>Responses:</strong> Isolate hosts, remove persistence, restore clean backups.</li>
+            </ul>
+        `;
+    } else {
+        html = '<p>Background details are not available for this scenario.</p>';
+    }
+
+    body.innerHTML = html;
 }
 
 // Start a scenario
@@ -143,16 +232,19 @@ async function startScenario(scenarioId) {
             // Load first event immediately (no click needed)
             const firstEventResponse = await fetch(`${API_BASE}/sessions/${currentSessionId}/events`);
             const firstEventData = await firstEventResponse.json();
-            displayEvents(firstEventData.events);
+            displayEvents(firstEventData.events, true);
             updateMetrics(firstEventData.events);
             updateScore();
+            const finalReportBtn = document.getElementById('view-nist-button');
             
             // Show decision point if it's the first event (unlikely but handle it)
             if (firstEventData.decision_point) {
                 showDecisionPoint(firstEventData.decision_point);
                 document.getElementById('next-event-btn').style.display = 'none';
+                if (finalReportBtn) finalReportBtn.style.display = 'none';
             } else {
                 document.getElementById('next-event-btn').style.display = firstEventData.has_more ? 'block' : 'none';
+                if (finalReportBtn) finalReportBtn.style.display = firstEventData.has_more ? 'none' : 'block';
             }
         }
     } catch (error) {
@@ -275,16 +367,19 @@ async function startSubScenario(subScenarioIndex) {
         // Load first event immediately
         const firstEventResponse = await fetch(`${API_BASE}/sessions/${currentSessionId}/events`);
         const firstEventData = await firstEventResponse.json();
-        displayEvents(firstEventData.events);
+        displayEvents(firstEventData.events, true);
         updateMetrics(firstEventData.events);
         updateScore();
+        const finalReportBtn = document.getElementById('view-nist-button');
         
         // Show decision point if it's the first event
         if (firstEventData.decision_point) {
             showDecisionPoint(firstEventData.decision_point);
             document.getElementById('next-event-btn').style.display = 'none';
+            if (finalReportBtn) finalReportBtn.style.display = 'none';
         } else {
             document.getElementById('next-event-btn').style.display = firstEventData.has_more ? 'block' : 'none';
+            if (finalReportBtn) finalReportBtn.style.display = firstEventData.has_more ? 'none' : 'block';
         }
     } catch (error) {
         console.error('Error starting sub-scenario:', error);
@@ -349,6 +444,7 @@ async function loadNextEvent() {
         const response = await fetch(`${API_BASE}/sessions/${currentSessionId}/events?since=${lastDecisionStep}`);
         const data = await response.json();
 
+        const finalReportBtn = document.getElementById('view-nist-button');
         // Display events
         displayEvents(data.events);
 
@@ -356,8 +452,10 @@ async function loadNextEvent() {
         if (data.decision_point) {
             showDecisionPoint(data.decision_point);
             document.getElementById('next-event-btn').style.display = 'none';
+            if (finalReportBtn) finalReportBtn.style.display = 'none';
         } else {
             document.getElementById('next-event-btn').style.display = data.has_more ? 'block' : 'none';
+            if (finalReportBtn) finalReportBtn.style.display = data.has_more ? 'none' : 'block';
         }
 
         // Update metrics
@@ -369,7 +467,7 @@ async function loadNextEvent() {
 
         // Check if scenario is complete
         if (!data.has_more && !data.decision_point) {
-            setTimeout(() => completeScenario(), 2000);
+        completeScenario();
         }
     } catch (error) {
         console.error('Error loading events:', error);
@@ -377,14 +475,17 @@ async function loadNextEvent() {
 }
 
 // Display events
-function displayEvents(events) {
+function displayEvents(events, reset = false) {
     const container = document.getElementById('events-container');
     
-    // Re-render the list to avoid duplicates when advancing steps
-    container.innerHTML = '';
+    if (reset) {
+        container.innerHTML = '';
+        displayedEventIds.clear();
+    }
     
     events.forEach(event => {
-        if (event.type === 'decision_point') return; // Skip decision points in event list
+        if (event.type === 'decision_point') return;
+        if (event.id && displayedEventIds.has(event.id)) return;
         
         const eventDiv = document.createElement('div');
         eventDiv.className = `event-item alert-${event.severity || 'medium'}`;
@@ -405,9 +506,9 @@ function displayEvents(events) {
         `;
         
         container.appendChild(eventDiv);
+        if (event.id) displayedEventIds.add(event.id);
     });
 
-    // Scroll to bottom
     container.scrollTop = container.scrollHeight;
 }
 
@@ -419,6 +520,7 @@ function showDecisionPoint(decisionPoint) {
 
     description.textContent = decisionPoint.description;
     options.innerHTML = '';
+    currentDecisionPoint = decisionPoint;
 
     decisionPoint.options.forEach(option => {
         const btn = document.createElement('button');
@@ -448,7 +550,7 @@ async function submitDecision(actionId, optionId) {
         }
 
         const feedback = await response.json();
-        showFeedback(feedback);
+        showFeedback(feedback, optionId);
         
         // Hide decision section
         document.getElementById('decision-section').style.display = 'none';
@@ -472,23 +574,101 @@ async function submitDecision(actionId, optionId) {
 }
 
 // Show feedback
-function showFeedback(feedback) {
+function showFeedback(feedback, selectedOptionId) {
     const section = document.getElementById('feedback-section');
     const content = document.getElementById('feedback-content');
 
     const feedbackClass = feedback.correct ? 'feedback-correct' : 'feedback-incorrect';
     const icon = feedback.correct ? '✓' : '✗';
+    const selectedOption = currentDecisionPoint && selectedOptionId
+        ? currentDecisionPoint.options.find(opt => opt.id === selectedOptionId)
+        : null;
+    const explanation = feedback.explanation || (selectedOption ? selectedOption.explanation : '');
+    const why = explanation ? `<p><strong>Why:</strong> ${explanation}</p>` : '';
 
     content.innerHTML = `
         <div class="${feedbackClass}">
             <strong>${icon} ${feedback.correct ? 'Correct!' : 'Incorrect'}</strong>
             <p>${feedback.feedback}</p>
             <p><strong>Score:</strong> ${feedback.score} / ${feedback.max_score}</p>
-            ${feedback.explanation ? `<p><em>${feedback.explanation}</em></p>` : ''}
+            ${why}
+            <button id="view-feedback-details-btn" class="btn-secondary" style="margin-top: 15px; width: 100%;">View Detailed Analysis</button>
+            <p style="margin-top: 10px; font-style: italic; color: #666;">Hold tight for a few seconds while the NIST standard practice page appears automatically.</p>
         </div>
     `;
 
+    const detailsBtn = document.getElementById('view-feedback-details-btn');
+    if (detailsBtn) {
+        detailsBtn.dataset.feedback = JSON.stringify(feedback);
+        detailsBtn.dataset.optionId = selectedOptionId || '';
+        detailsBtn.dataset.decision = currentDecisionPoint ? JSON.stringify(currentDecisionPoint) : '';
+        detailsBtn.onclick = () => {
+            const storedFeedback = detailsBtn.dataset.feedback
+                ? JSON.parse(detailsBtn.dataset.feedback)
+                : feedback;
+            const storedDecision = detailsBtn.dataset.decision
+                ? JSON.parse(detailsBtn.dataset.decision)
+                : currentDecisionPoint;
+            const storedOptionId = detailsBtn.dataset.optionId || selectedOptionId;
+            showFeedbackDetailsModal(storedFeedback, storedOptionId, storedDecision);
+        };
+    }
+
     section.style.display = 'block';
+}
+
+function showFeedbackDetailsModal(feedback, selectedOptionId = null, decisionPoint = null) {
+    const modal = document.getElementById('feedback-details-modal');
+    const body = document.getElementById('feedback-details-body');
+    if (!modal || !body || !decisionPoint) return;
+
+    const selectedOption = decisionPoint.options.find(opt => opt.id === selectedOptionId);
+    const maxScore = feedback.max_score || decisionPoint.max_score || 10;
+    const awardedScore = feedback.score ?? (selectedOption ? selectedOption.score : 0);
+
+    const sortedOptions = [...decisionPoint.options].sort((a, b) => b.score - a.score);
+    let html = '';
+
+    if (selectedOption) {
+        html += `
+            <div style="margin-bottom: 25px; padding: 15px; background: #f8f9fa; border-left: 4px solid #667eea; border-radius: 4px;">
+                <h4 style="color: #667eea; margin-bottom: 10px;">Your Selection</h4>
+                <p><strong>${escapeHtml(selectedOption.text)}</strong></p>
+                <p><strong>Score:</strong> ${awardedScore} / ${maxScore} points</p>
+                <p><strong>Feedback:</strong> ${escapeHtml(selectedOption.feedback || 'No feedback available')}</p>
+                ${selectedOption.explanation ? `<p><strong>Explanation:</strong> ${escapeHtml(selectedOption.explanation)}</p>` : ''}
+            </div>
+        `;
+    }
+
+    html += `
+        <h4 style="color: #667eea; margin-bottom: 15px;">All Options Comparison</h4>
+        <p style="margin-bottom: 15px; color: #666;">Review all available options to understand why certain choices score higher:</p>
+    `;
+
+    sortedOptions.forEach(option => {
+        const isSelected = option.id === selectedOptionId;
+        const displayScore = isSelected ? awardedScore : option.score;
+        const scoreColor = displayScore >= 8 ? '#28a745' : displayScore >= 5 ? '#ffc107' : '#dc3545';
+        const scoreLabel = displayScore >= 8 ? 'Optimal/Strong' : displayScore >= 5 ? 'Partial' : 'Incorrect';
+
+        html += `
+            <div style="margin-bottom: 20px; padding: 15px; background: ${isSelected ? '#f0f4ff' : 'white'}; border: 2px solid ${isSelected ? '#667eea' : '#e9ecef'}; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                    <strong style="color: #333; flex: 1;">${escapeHtml(option.text)}</strong>
+                    <span style="background: ${scoreColor}; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85em; font-weight: 600; margin-left: 10px;">
+                        ${displayScore} points (${scoreLabel})
+                    </span>
+                </div>
+                <p style="margin: 8px 0; color: #555;"><strong>Feedback:</strong> ${escapeHtml(option.feedback || 'No feedback available')}</p>
+                ${option.explanation ? `<p style="margin: 8px 0; color: #666; font-style: italic;"><strong>Why this option:</strong> ${escapeHtml(option.explanation)}</p>` : ''}
+                ${isSelected ? `<p style="margin-top: 8px; color: #667eea; font-weight: 600;">✓ Your selection</p>` : ''}
+            </div>
+        `;
+    });
+
+    body.innerHTML = html;
+    modal.style.display = 'flex';
 }
 
 // Update metrics
@@ -602,13 +782,16 @@ function showCompletionScreen(result) {
     document.getElementById('decision-section').style.display = 'none';
     document.getElementById('feedback-section').style.display = 'none';
     document.getElementById('next-event-btn').style.display = 'none';
-    
-    // Calculate percentage if not provided
-    const percentage = result.percentage || (result.max_score > 0 ? (result.score / result.max_score) * 100 : 0);
-    
-    document.getElementById('final-score').textContent = result.score || 0;
-    document.getElementById('final-max-score').textContent = result.max_score || 10;
-    document.getElementById('final-score-percentage').textContent = `${Math.round(percentage)}%`;
+
+    const scoreElement = document.getElementById('final-score');
+    const maxScoreElement = document.getElementById('final-max-score');
+    const percentageElement = document.getElementById('final-score-percentage');
+    if (scoreElement && maxScoreElement && percentageElement) {
+        const percentage = result.percentage || (result.max_score > 0 ? (result.score / result.max_score) * 100 : 0);
+        scoreElement.textContent = result.score || 0;
+        maxScoreElement.textContent = result.max_score || 10;
+        percentageElement.textContent = `${Math.round(percentage)}%`;
+    }
 
     // Display recommendations
     const recommendationsList = document.getElementById('recommendations-list');
@@ -663,4 +846,3 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
-
