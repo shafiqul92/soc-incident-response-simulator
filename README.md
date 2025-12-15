@@ -137,5 +137,3 @@ All data is fully synthetic and intended solely for educational use.
 ## Documentation
 
 Extended documentation is provided in `PROJECT_SUMMARY.md`.
-
-The final project report (submitted as a PDF to Canvas) contains the complete write-up, evaluation, and reflection.
