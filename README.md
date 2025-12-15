@@ -35,6 +35,28 @@ A built-in Learning Center provides background instruction, and a Detailed Analy
 - Python 3.7 or higher
 - pip (Python package manager)
 - A modern web browser (Chrome, Firefox, Edge, or Safari)
+- Git (optional, for cloning the repository)
+
+---
+
+## Download
+
+### Option 1: Clone with Git (Recommended)
+
+If you have Git installed, clone the repository:
+
+```bash
+git clone https://github.com/shafiqul92/soc-incident-response-simulator.git
+cd soc-incident-response-simulator
+```
+
+### Option 2: Download ZIP
+
+1. Visit the repository: https://github.com/shafiqul92/soc-incident-response-simulator
+2. Click the green **"Code"** button
+3. Select **"Download ZIP"**
+4. Extract the ZIP file to your desired location
+5. Navigate to the extracted folder in your terminal/command prompt
 
 ---
 
